@@ -3,7 +3,12 @@ from discord.ext import commands
 from discord import app_commands
 
 class Server(commands.Cog):
-
+    """
+        TODO:
+            1. API setup for Immich
+            2. API setup for Crafty
+            3. API setup for Docker updates
+    """
     def __init__(self, bot):
         self.bot = bot
 
