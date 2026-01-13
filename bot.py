@@ -1,19 +1,21 @@
 import discord
 import logging
 import os
+import sys
 import traceback
 from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.environ.get("DISCORD_TOKEN")
-ID = os.environ.get("GUILD_ID")
-
-if TOKEN is None:
-    raise ValueError("Discord TOKEN is not found.")
-
-if ID is None:
-    raise ValueError("Guild ID is not found.")
+try:
+    TOKEN = os.environ["DISCORD_TOKEN"]
+    ID = int(os.environ["GUILD_ID"])
+except KeyError as e:
+    print(f"Missing enviorment variable {e}")
+    sys.exit(1)
+except ValueError:
+    print(f"Error: GUILD_ID is not a valid number")
+    sys.exit(1)
 
 GUILD_ID = discord.Object(id=ID)
 
@@ -24,7 +26,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-initial_extensions = ["cogs.general", "cogs.server"]
+initial_extensions = ["cogs.wikisearch", "cogs.immich"]
 
 
 @bot.event

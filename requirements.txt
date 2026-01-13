@@ -1,3 +1,4 @@
+openapi-python-client
 discord
 discord.py
 python-dotenv

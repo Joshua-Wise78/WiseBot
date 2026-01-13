@@ -5,7 +5,7 @@ from discord import app_commands
 from jsonUtils import save_to_json, retrieve_from_json, list_sites, search_sites
 from fandom import get_fandom
 
-class General(commands.Cog):
+class Wikisearch(commands.Cog):
     """
     TODO:
         1. Robust Error handling needs to be put in place to return logs & codes
@@ -100,4 +100,4 @@ class General(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(General(bot))
+    await bot.add_cog(Wikisearch(bot))
