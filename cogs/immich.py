@@ -1,12 +1,17 @@
 import discord
 import httpx
 import os
+import io
+import uuid
+from datetime import datetime
 from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 
 from immich_client import AuthenticatedClient 
-from immich_client.api.authentication import login
+from immich_client.api.assets import upload_asset
+from immich_client.models import AssetMediaCreateDto
+from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
 load_dotenv()
@@ -44,8 +49,9 @@ class Immich(commands.Cog):
 
             if vpn_attempt:
                 self.client = AuthenticatedClient(base_url=tailscale_url + "/api",
-                                                   token=IMMICH_KEY)
-                print(tailscale_url)
+                                                   token=IMMICH_KEY,
+                                                   auth_header_name="x-api-key",
+                                                   prefix="")
                 print("Connected through Tailscale.")
 
     async def check_connection(self, url):
@@ -59,12 +65,54 @@ class Immich(commands.Cog):
             return None
         return None
 
-    @commands.command()
-    async def status(self, ctx):
+    @app_commands.command(name="check-immich-connection",
+                          description="Check Immich status.")
+    async def status(self, interaction: discord.Interaction):
         if not self.client:
-            await ctx.send("Bot is not connected to Immich.")
-            return
-        await ctx.send(f"Currently connected to: {self.client._base_url}")
+            await interaction.response.send_message(f"Error: Not connected")
+        else:
+            await interaction.response.send_message(f"Connected to {self.client._base_url}")
+
+    @app_commands.command(name="send-photo", description="Send a photo to Immich instance.")
+    async def sendImg(self, interaction: discord.Interaction, photo: discord.Attachment):
+        await interaction.response.defer(thinking=True)
+
+        try:
+            file_bytes = await photo.read()
+            file_stream = io.BytesIO(file_bytes)
+
+            device_asset_id = f"discord-{photo.id}-{uuid.uuid4()}"
+
+            immich_file = File(
+                payload=file_stream,
+                file_name=photo.filename,
+                mime_type=photo.content_type or "image/jpeg"
+            )
+
+            body = AssetMediaCreateDto(
+                asset_data=immich_file,
+                device_asset_id=device_asset_id,
+                device_id="discord-bot",
+                file_created_at=datetime.now(),
+                file_modified_at=datetime.now(),
+            )
+
+            if self.client is None:
+                await interaction.followup.send(f"Upload not possible not connected to immich client")
+            else:
+                response = upload_asset.sync(
+                    client=self.client,
+                    body=body
+                )
+
+                if response:
+                    await interaction.followup.send(f"Successfully uploaded: `{photo.filename}` to immich")
+                else:
+                    await interaction.followup.send(f"Upload failed. No response from immich.")
+            
+
+        except Exception as e:
+            await interaction.followup.send(f"Error uploading file: {str(e)}")
 
 async def setup(bot):
     await bot.add_cog(Immich(bot))

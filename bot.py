@@ -26,7 +26,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-initial_extensions = ["cogs.wikisearch", "cogs.immich"]
+initial_extensions = ["cogs.fandomSearch", "cogs.immich"]
 
 
 @bot.event
