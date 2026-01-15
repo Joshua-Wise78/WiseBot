@@ -14,6 +14,9 @@ from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
+from immichUtils import check_immich_connection, upload_image
+
+
 load_dotenv()
 try:
     IMMICH_KEY = os.environ["IMMICH_KEY"]
@@ -66,53 +69,25 @@ class Immich(commands.Cog):
         return None
 
     @app_commands.command(name="check-immich-connection",
-                          description="Check Immich status.")
+                           description="Check Immich status.")
     async def status(self, interaction: discord.Interaction):
-        if not self.client:
-            await interaction.response.send_message(f"Error: Not connected")
-        else:
-            await interaction.response.send_message(f"Connected to {self.client._base_url}")
+        response  = check_immich_connection(self)            
+        await interaction.response.send_message(response)
+
 
     @app_commands.command(name="send-photo", description="Send a photo to Immich instance.")
     async def sendImg(self, interaction: discord.Interaction, photo: discord.Attachment):
         await interaction.response.defer(thinking=True)
 
         try:
-            file_bytes = await photo.read()
-            file_stream = io.BytesIO(file_bytes)
-
-            device_asset_id = f"discord-{photo.id}-{uuid.uuid4()}"
-
-            immich_file = File(
-                payload=file_stream,
-                file_name=photo.filename,
-                mime_type=photo.content_type or "image/jpeg"
-            )
-
-            body = AssetMediaCreateDto(
-                asset_data=immich_file,
-                device_asset_id=device_asset_id,
-                device_id="discord-bot",
-                file_created_at=datetime.now(),
-                file_modified_at=datetime.now(),
-            )
-
-            if self.client is None:
-                await interaction.followup.send(f"Upload not possible not connected to immich client")
-            else:
-                response = upload_asset.sync(
-                    client=self.client,
-                    body=body
-                )
-
-                if response:
-                    await interaction.followup.send(f"Successfully uploaded: `{photo.filename}` to immich")
-                else:
-                    await interaction.followup.send(f"Upload failed. No response from immich.")
-            
+            response, success = await upload_image(self, photo)
+            await interaction.followup.send(f"{response}")
 
         except Exception as e:
-            await interaction.followup.send(f"Error uploading file: {str(e)}")
+             await interaction.followup.send(f"Error uploading file: {str(e)}")
+
+    async def searchImg(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Not implemented currently.")
 
 async def setup(bot):
     await bot.add_cog(Immich(bot))
