@@ -1,6 +1,5 @@
 import io
 import discord
-import os
 import uuid
 from datetime import datetime
 from dotenv import load_dotenv
@@ -86,12 +85,12 @@ async def upload_image(self, photo: discord.Attachment):
 
         # Check if it sync'd properlly and uploaded
         if response:
-            return f"Successfuly uploaded photo: {photo.filename} ", True
+            return f"Successfuly uploaded photo: {photo.filename} "
         else:
-            return "Upload failed, no response from Immich.", False
+            return "Upload failed, no response from Immich."
 
     except Exception as e:
-        return e, False
+        return e
 
 def check_immich_connection(self):
     if not self.client:

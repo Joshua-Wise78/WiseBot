@@ -28,15 +28,21 @@ except KeyError as e:
 class Immich(commands.Cog):
     """
         TODO:
-            1. API setup for Immich
-            2. Search images
-            3. Server status
+            1. Search images
+            2. Memory photos
+
+        ADD:
+            1. send-photo toggle for if the photo is favorite or not
     """
     def __init__(self, bot):
         self.bot = bot
         self.client = None
 
     async def cog_load(self):
+        """
+          Initalizes the Immich client by connecting to the Local_IP first then
+          falling back on Tailscale as a secondary connection.  
+        """
         local_url = f"http://{LOCAL_IP}:2283"
         local_attempt = await self.check_connection(local_url)
 
@@ -58,6 +64,9 @@ class Immich(commands.Cog):
                 print("Connected through Tailscale.")
 
     async def check_connection(self, url):
+        """
+          Attempts to use httpx to ping the client to check for a connection  
+        """
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(f"{url}/server-info/ping",
@@ -71,21 +80,28 @@ class Immich(commands.Cog):
     @app_commands.command(name="check-immich-connection",
                            description="Check Immich status.")
     async def status(self, interaction: discord.Interaction):
+        """
+            Slash command used to call check_immich_connection to see if the
+            client is connected to Immich's api or not.  
+        """
         response  = check_immich_connection(self)            
         await interaction.response.send_message(response)
 
-
     @app_commands.command(name="send-photo", description="Send a photo to Immich instance.")
     async def sendImg(self, interaction: discord.Interaction, photo: discord.Attachment):
+        """
+          Slash command that sends a photo to immich calling upload_image from
+          immichUtils  
+        """
         await interaction.response.defer(thinking=True)
-
         try:
-            response, success = await upload_image(self, photo)
+            response = await upload_image(self, photo)
             await interaction.followup.send(f"{response}")
-
         except Exception as e:
              await interaction.followup.send(f"Error uploading file: {str(e)}")
 
+    # Search for an image using smart_search feature from Immich
+    @app_commands.command(name="search-photo", description="Smart search image with query.")
     async def searchImg(self, interaction: discord.Interaction):
         await interaction.response.send_message("Not implemented currently.")
 
