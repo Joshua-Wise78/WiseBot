@@ -23,29 +23,27 @@ from immich_client.api.memories import search_memories
 
 async def list_memories(self, date):
 
-    date_obj = datetime.strptime(date, "%Y-%m-%d")
-
+    try:
+        date_obj = datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        return None, "Invalid format for date. YYYY-MM-DD"
 
     try:
         if self.client is None:
-            return "Not connected to the client", False
+            return None, "Not connected to the client."
 
         memories = search_memories.sync(
-            client=self,
-            for_=date
+            client=self.client,
+            for_=date_obj
         )
 
         if not memories:
-            return f"No memories returned for {date_obj}"
+            return None, "No memories on that date."
 
-        memory_list = []
-        for memory in memories:
-            memory_list.append(memory)
-
-        return memory_list, True
+        return memories, None
 
     except Exception as e:
-        return e, False
+        return None, f"Error searching memories: {e}"
         
     
 async def upload_image(self, photo: discord.Attachment):

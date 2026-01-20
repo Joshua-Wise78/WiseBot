@@ -111,7 +111,21 @@ class Immich(commands.Cog):
         await interaction.response.defer(thinking=True)
 
         try:
-            response = await list_memories(self, date)
+            memories, error = await list_memories(self, date)                
+
+            if error:
+                await interaction.followup.send(error)
+                return
+
+            if memories is not None:
+                response_msg = f"**Found {len(memories)} memories for {date}:**\n"
+        
+                for memory in memories:
+                    response_msg += f"- {memory.id}\n"
+
+                await interaction.followup.send(response_msg)
+
+               
         except Exception as e:
             await interaction.followup.send(f"Error listing memories: {str(e)}")
         
