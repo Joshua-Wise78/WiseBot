@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from immich_client.api.assets import upload_asset
 from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
+from immich_client.api.memories import search_memories
 
 # This might be re-added later depending on if it is needed
 # however I do not think it is needed since it can be passed in by
@@ -19,6 +20,33 @@ from immich_client.types import File
 #     TAILSCALE_IP = os.environ["TAILSCALE_IP"]
 # except KeyError as e:
 #     print(f"Missing enviorment variable {e}")
+
+async def list_memories(self, date):
+
+    date_obj = datetime.strptime(date, "%Y-%m-%d")
+
+
+    try:
+        if self.client is None:
+            return "Not connected to the client", False
+
+        memories = search_memories.sync(
+            client=self,
+            for_=date
+        )
+
+        if not memories:
+            return f"No memories returned for {date_obj}"
+
+        memory_list = []
+        for memory in memories:
+            memory_list.append(memory)
+
+        return memory_list, True
+
+    except Exception as e:
+        return e, False
+        
     
 async def upload_image(self, photo: discord.Attachment):
     """
@@ -36,7 +64,7 @@ async def upload_image(self, photo: discord.Attachment):
                 asset_data (File):
                 device_asset_id (str):
                 device_id (str):
-                file_created_at (datetime.datetime):
+               file_created_at (datetime.datetime):
                 file_modified_at (datetime.datetime):
                 duration (str | Unset):
                 filename(str | Unset):

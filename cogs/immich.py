@@ -10,11 +10,12 @@ from dotenv import load_dotenv
 
 from immich_client import AuthenticatedClient 
 from immich_client.api.assets import upload_asset
+from immich_client.api.memories import search_memories
 from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
-from immichUtils import check_immich_connection, upload_image
+from immichUtils import check_immich_connection, upload_image, list_memories
 
 
 load_dotenv()
@@ -104,6 +105,16 @@ class Immich(commands.Cog):
     @app_commands.command(name="search-photo", description="Smart search image with query.")
     async def searchImg(self, interaction: discord.Interaction):
         await interaction.response.send_message("Not implemented currently.")
+
+    @app_commands.command(name="list-memories", description="List memories from date {XXXX-XX-XX}")
+    async def getMempory(self, interaction: discord.Interaction, date: str):
+        await interaction.response.defer(thinking=True)
+
+        try:
+            response = await list_memories(self, date)
+        except Exception as e:
+            await interaction.followup.send(f"Error listing memories: {str(e)}")
+        
 
 async def setup(bot):
     await bot.add_cog(Immich(bot))
