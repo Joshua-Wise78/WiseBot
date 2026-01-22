@@ -106,25 +106,35 @@ class Immich(commands.Cog):
     async def searchImg(self, interaction: discord.Interaction):
         await interaction.response.send_message("Not implemented currently.")
 
-    @app_commands.command(name="list-memories", description="List memories from date {XXXX-XX-XX}")
+    @app_commands.command(name="memories", description="List up to 5 memories from date {XXXX-XX-XX}")
     async def getMempory(self, interaction: discord.Interaction, date: str):
         await interaction.response.defer(thinking=True)
 
         try:
             memories, error = await list_memories(self, date)                
 
+            # If there is unexpected error catch it and send it back
             if error:
                 await interaction.followup.send(error)
                 return
 
-            if memories is not None:
-                response_msg = f"**Found {len(memories)} memories for {date}:**\n"
-        
-                for memory in memories:
-                    response_msg += f"- {memory.id}\n"
-
-                await interaction.followup.send(response_msg)
-
+            # If the memories is none we just return the error
+            if memories is None:
+                await interaction.followup.send("Could not retrieve memories.")
+                return
+            else:
+                # Call some convert function to make the assets a iterable
+                # dict and do some extra checking to see if the files are of
+                # correct size and can be displayed
+                #
+                # Assets is a SearchResponseDto
+                # Needs to be converted to SearchAssetResponseDto
+                #
+                # SearchAssetResponseDto has the param items that can be used
+                # for a list of AssetResponseDto to be iterable and has literally
+                # everything that I should need to conver Assets to images for
+                # embedding thumbnails I think and filenames & owners
+                await interaction.followup.send("Not finished")
                
         except Exception as e:
             await interaction.followup.send(f"Error listing memories: {str(e)}")

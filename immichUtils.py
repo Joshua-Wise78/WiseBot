@@ -21,6 +21,9 @@ from immich_client.api.search import search_assets
 # except KeyError as e:
 #     print(f"Missing enviorment variable {e}")
 
+async def convert_search_response_dto(asset):
+    return None, "Not implemented"
+
 async def list_memories(self, date):
 
     try:
@@ -30,12 +33,12 @@ async def list_memories(self, date):
 
     try:
         if self.client is None:
-            return None, "Not connected to the client."
+            return None,  "Not connected to the client."
 
         device_asset_id = f"discord-{date_obj}-{uuid.uuid4()}"
 
-        created_after = None
-        created_before = None
+        created_after = date_obj.replace(hour=0, minute=0, second=0)
+        created_before = date_obj.replace(hour=23, minute=59, second=59)
 
         #DTO model needs to be created first
         body = MetadataSearchDto(
@@ -44,16 +47,16 @@ async def list_memories(self, date):
             created_after=created_after,
             created_before=created_before,
         )
-
+        
         assets = search_assets.sync(
             client=self.client,
             body=body
         )
 
-        if not assets:
-            return None, "No memories on that date."
+        if assets is None:
+            return None, f"Error memories not found"
 
-        return assets, None
+        return assets, "Memories sent to command."
 
     except Exception as e:
         return None, f"Error searching memories: {e}"
