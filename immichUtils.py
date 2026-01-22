@@ -5,9 +5,9 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 from immich_client.api.assets import upload_asset
-from immich_client.models import AssetMediaCreateDto
+from immich_client.models import AssetMediaCreateDto, MetadataSearchDto
 from immich_client.types import File
-from immich_client.api.memories import search_memories
+from immich_client.api.search import search_assets
 
 # This might be re-added later depending on if it is needed
 # however I do not think it is needed since it can be passed in by
@@ -32,15 +32,28 @@ async def list_memories(self, date):
         if self.client is None:
             return None, "Not connected to the client."
 
-        memories = search_memories.sync(
-            client=self.client,
-            for_=date_obj
+        device_asset_id = f"discord-{date_obj}-{uuid.uuid4()}"
+
+        created_after = None
+        created_before = None
+
+        #DTO model needs to be created first
+        body = MetadataSearchDto(
+            device_asset_id=device_asset_id,
+            device_id="discord-bot",
+            created_after=created_after,
+            created_before=created_before,
         )
 
-        if not memories:
+        assets = search_assets.sync(
+            client=self.client,
+            body=body
+        )
+
+        if not assets:
             return None, "No memories on that date."
 
-        return memories, None
+        return assets, None
 
     except Exception as e:
         return None, f"Error searching memories: {e}"
