@@ -15,7 +15,12 @@ from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
-from immichUtils import check_immich_connection, upload_image, list_memories
+from immichUtils import ( check_immich_connection,
+     convert_search_response_dto,
+     upload_image,
+     list_memories,
+     get_asset_thumbnail
+ )
 
 
 load_dotenv()
@@ -111,34 +116,52 @@ class Immich(commands.Cog):
         await interaction.response.defer(thinking=True)
 
         try:
-            memories, error = await list_memories(self, date)                
+            search_res, error = await list_memories(self, date)                
 
-            # If there is unexpected error catch it and send it back
             if error:
                 await interaction.followup.send(error)
                 return
 
-            # If the memories is none we just return the error
-            if memories is None:
-                await interaction.followup.send("Could not retrieve memories.")
+            asset_list, error = await convert_search_response_dto(search_res)
+
+            if error:
+                await interaction.followup.send(error)
                 return
-            else:
-                # Call some convert function to make the assets a iterable
-                # dict and do some extra checking to see if the files are of
-                # correct size and can be displayed
-                #
-                # Assets is a SearchResponseDto
-                # Needs to be converted to SearchAssetResponseDto
-                #
-                # SearchAssetResponseDto has the param items that can be used
-                # for a list of AssetResponseDto to be iterable and has literally
-                # everything that I should need to conver Assets to images for
-                # embedding thumbnails I think and filenames & owners
-                await interaction.followup.send("Not finished")
-               
+
+            if not asset_list:
+                await interaction.followup.send(f"No memories found for {date}.")
+                return
+
+            count = 0
+            for asset in asset_list[:5]:
+                
+                try:
+                    image_bytes, img_error = await get_asset_thumbnail(self, asset.id)
+
+                    if img_error:
+                        await interaction.followup.send(f"Could not load image for {asset.original_file_name}: {img_error}")
+                        continue
+
+                    file = discord.File(io.BytesIO(image_bytes), filename=asset.original_file_name)
+
+                    embed = discord.Embed(
+                        title=f"Memory: {asset.original_file_name}",
+                        description=f"Created: {asset.file_created_at.strftime('%Y-%m-%d %H:%M:%S')}",
+                        color=discord.Color.blue()
+                    )
+                    embed.set_image(url=f"attachment://{asset.original_file_name}")
+
+                    await interaction.followup.send(embed=embed, file=file)
+                    count += 1
+                except Exception as loop_error:
+                    print(f"Error processing asset {asset.id}: {loop_error}")
+                    continue
+            
+            if count == 0:
+                await interaction.followup.send("Found assets, but failed to download any images.")
+
         except Exception as e:
             await interaction.followup.send(f"Error listing memories: {str(e)}")
-        
 
 async def setup(bot):
     await bot.add_cog(Immich(bot))

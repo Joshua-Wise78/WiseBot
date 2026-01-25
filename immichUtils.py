@@ -1,31 +1,88 @@
 import io
+import os
 import discord
 import uuid
+import httpx
 from datetime import datetime
 from dotenv import load_dotenv
 
-from immich_client.api.assets import upload_asset
 from immich_client.models import AssetMediaCreateDto, MetadataSearchDto
 from immich_client.types import File
+
+from immich_client.api.assets import upload_asset
 from immich_client.api.search import search_assets
+from immich_client.api.assets import view_asset
 
-# This might be re-added later depending on if it is needed
-# however I do not think it is needed since it can be passed in by
-# references and just instances of interactions, attachnents... ect
-# load_dotenv()
-# try:
-#     # Load in enviorment variables for use
-#     IMMICH_KEY = os.environ["IMMICH_KEY"]
-#     LOCAL_IP = os.environ["LOCAL_IP"]
-#     TAILSCALE_IP = os.environ["TAILSCALE_IP"]
-# except KeyError as e:
-#     print(f"Missing enviorment variable {e}")
+load_dotenv()
+IMMICH_KEY = os.getenv("IMMICH_KEY")
 
-async def convert_search_response_dto(asset):
-    return None, "Not implemented"
+class SimpleAsset:
+    def __init__(self, data):
+        if hasattr(data, "id"):
+            self.id = data.id
+            self.original_file_name = getattr(data, "original_file_name", None)
+            created_at = getattr(data, "file_created_at", None)
+        else:
+            self.id = data.get('id')
+            self.original_file_name = data.get('originalFileName')
+            created_at = data.get('fileCreatedAt')
+
+        if not self.original_file_name:
+            self.original_file_name = f"{self.id}.jpg"
+
+        if isinstance(created_at, datetime):
+            self.file_created_at = created_at
+        elif isinstance(created_at, str):
+            try:
+                self.file_created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+            except ValueError:
+                self.file_created_at = datetime.now()
+        else:
+            self.file_created_at = datetime.now()
+
+
+async def get_asset_thumbnail(self, asset_id):
+    if self.client is None:
+        return None, "Client not connected"
+
+    try:
+        real_uuid = asset_id
+        if isinstance(asset_id, str):
+            real_uuid = uuid.UUID(asset_id)
+
+        response_file = await view_asset.asyncio(
+            client=self.client,
+            id=real_uuid
+        )
+
+        if response_file and response_file.payload:
+            return response_file.payload.read(), None
+        else:
+            return None, "Error downloading thumbnail"
+
+    except Exception as e:
+        return None, f"Error downloading thumbnail: {e}"
+            
+
+async def convert_search_response_dto(search_result):
+    if not search_result:
+        return None, "No search result to convert."
+
+    try:
+        # The API returns a SearchResponseDto -> assets -> items
+        assets_wrapper = getattr(search_result, 'assets', None)
+        
+        if assets_wrapper and hasattr(assets_wrapper, "items"):
+            return [SimpleAsset(item) for item in assets_wrapper.items], None
+            
+        return None, "Could not locate asset list in response structure."
+
+    except Exception as e:
+        return None, f"Unexpected error converting assets: {e}"
+
 
 async def list_memories(self, date):
-
+    print(f"Searching memories for date: {date}")
     try:
         date_obj = datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
@@ -35,82 +92,44 @@ async def list_memories(self, date):
         if self.client is None:
             return None,  "Not connected to the client."
 
-        device_asset_id = f"discord-{date_obj}-{uuid.uuid4()}"
+        local_tz = datetime.now().astimezone().tzinfo
+        start_local = date_obj.replace(hour=0, minute=0, second=0, tzinfo=local_tz)
+        end_local = date_obj.replace(hour=23, minute=59, second=59, tzinfo=local_tz)
 
-        created_after = date_obj.replace(hour=0, minute=0, second=0)
-        created_before = date_obj.replace(hour=23, minute=59, second=59)
-
-        #DTO model needs to be created first
         body = MetadataSearchDto(
-            device_asset_id=device_asset_id,
-            device_id="discord-bot",
-            created_after=created_after,
-            created_before=created_before,
+            taken_after=start_local,
+            taken_before=end_local,
         )
-        
-        assets = search_assets.sync(
-            client=self.client,
+
+        response = await search_assets.asyncio(
+            client=self.client, 
             body=body
         )
+        
+        return response, None
 
-        if assets is None:
-            return None, f"Error memories not found"
-
-        return assets, "Memories sent to command."
-
+    except TypeError as e:
+        return None, f"Model Schema Error: {e}"
     except Exception as e:
         return None, f"Error searching memories: {e}"
-        
+
     
 async def upload_image(self, photo: discord.Attachment):
-    """
-        upload_image
-            self: The bot client in this reference it has access to the immich
-                api and is logged in to a instance.
-
-            photo: discord attachment that is used to upload to immich
-
-            Checks to see if the client is actually connected or not and if it is
-            then it creates some content that can be uploaded to immich. Via the
-            Dto given by immich-client (generated API)
-
-            DTO:
-                asset_data (File):
-                device_asset_id (str):
-                device_id (str):
-               file_created_at (datetime.datetime):
-                file_modified_at (datetime.datetime):
-                duration (str | Unset):
-                filename(str | Unset):
-
-                OPTIONALS:
-                is_favorite (bool | Unset):
-                live_photo_video_id (UUID | Unset):
-                metadata(list | Unset):
-                visibility(AssetVisibility | Unset):
-
-            Might implement is_favorite later for fun features.
-    """
     try:
-        # Default check to see if we are actually connected or not
         if self.client is None:
             return "Not connected to the client", False
 
-        # Read in the photo and convert it to bytes and it's stream
         file_bytes = await photo.read()
         file_stream = io.BytesIO(file_bytes)
 
-        # Attach a device asset ID for identification
         device_asset_id = f"discord-{photo.id}-{uuid.uuid4()}"
 
-        # Create the immich file with its content type
         immich_file = File(
             payload=file_stream,
             file_name=photo.filename,
             mime_type=photo.content_type or "image/jpeg"        
         )
 
-        # Create the dto body for upload
         body = AssetMediaCreateDto(
             asset_data=immich_file,
             device_asset_id=device_asset_id,
@@ -119,23 +138,23 @@ async def upload_image(self, photo: discord.Attachment):
             file_modified_at=datetime.now()
         )
 
-        # If the client is not connected
-        response = upload_asset.sync(
+        response = await upload_asset.asyncio(
             client=self.client,
             body=body
         )
 
-        # Check if it sync'd properlly and uploaded
         if response:
             return f"Successfuly uploaded photo: {photo.filename} "
         else:
             return "Upload failed, no response from Immich."
 
     except Exception as e:
-        return e
+        return f"Upload Error: {e}"
 
 def check_immich_connection(self):
     if not self.client:
         return "Error: Not connected to Immich."
     else:
-        return f"Connected to {self.client._base_url}"
+        # Safe URL check
+        url = getattr(self.client, 'base_url', getattr(self.client, '_base_url', 'Unknown URL'))
+        return f"Connected to {url}"
