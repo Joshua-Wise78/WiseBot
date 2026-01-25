@@ -22,6 +22,16 @@ from immichUtils import ( check_immich_connection,
      get_asset_thumbnail
  )
 
+"""
+ TODO:
+     1. Refactor code move server connection into its own cog and connection points.
+     2. Add a random photo grabber function.
+     3. Refactor output for getMemories function to not spam the server.
+     4. Add support for videos.
+     5. Add function to favorite images and filter them?
+     6. Album smart sort? (This one will suck)
+     
+ """
 
 load_dotenv()
 try:
@@ -33,10 +43,6 @@ except KeyError as e:
 
 class Immich(commands.Cog):
     """
-        TODO:
-            1. Search images
-            2. Memory photos
-
         ADD:
             1. send-photo toggle for if the photo is favorite or not
     """
