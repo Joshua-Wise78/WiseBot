@@ -22,14 +22,19 @@ class SimpleAsset:
             self.id = data.id
             self.original_file_name = getattr(data, "original_file_name", None)
             created_at = getattr(data, "file_created_at", None)
+            exif = getattr(data, "exif_info", None)
+            
         else:
             self.id = data.get('id')
             self.original_file_name = data.get('originalFileName')
             created_at = data.get('fileCreatedAt')
+            exif = data.get('exifInfo')
 
+        # Name fallback
         if not self.original_file_name:
             self.original_file_name = f"{self.id}.jpg"
 
+        # Date Parsing
         if isinstance(created_at, datetime):
             self.file_created_at = created_at
         elif isinstance(created_at, str):
@@ -40,6 +45,29 @@ class SimpleAsset:
         else:
             self.file_created_at = datetime.now()
 
+        self.location = "Unknown Location"
+        
+        if exif:
+            # Debug: Print this to your console to see what Immich is actually returning
+            print(f"DEBUG EXIF for {self.id}: {exif}")
+
+            def get_val(obj, attr):
+                if isinstance(obj, dict): 
+                    return obj.get(attr)
+                return getattr(obj, attr, None)
+
+            city = get_val(exif, 'city')
+            state = get_val(exif, 'state')
+            country = get_val(exif, 'country')
+            lat = get_val(exif, 'latitude')
+            long_ = get_val(exif, 'longitude')
+
+            loc_parts = [p for p in [city, state, country] if p]
+            
+            if loc_parts:
+                self.location = ", ".join(loc_parts)
+            elif lat is not None and long_ is not None:
+                self.location = f"{lat:.4f}, {long_:.4f}"
 
 async def get_asset_thumbnail(self, asset_id):
     if self.client is None:

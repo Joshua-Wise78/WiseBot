@@ -3,6 +3,7 @@ import httpx
 import os
 import io
 import uuid
+import random
 from datetime import datetime
 from discord.ext import commands
 from discord import app_commands
@@ -117,7 +118,7 @@ class Immich(commands.Cog):
     async def searchImg(self, interaction: discord.Interaction):
         await interaction.response.send_message("Not implemented currently.")
 
-    @app_commands.command(name="memories", description="List up to 5 memories from date {XXXX-XX-XX}")
+    @app_commands.command(name="memories", description="List 5 random memories from date {XXXX-XX-XX}")
     async def getMempory(self, interaction: discord.Interaction, date: str):
         await interaction.response.defer(thinking=True)
 
@@ -138,32 +139,44 @@ class Immich(commands.Cog):
                 await interaction.followup.send(f"No memories found for {date}.")
                 return
 
-            count = 0
-            for asset in asset_list[:5]:
-                
+            if len(asset_list) > 5:
+                selected_assets = random.sample(asset_list, 5)
+            else:
+                selected_assets = asset_list
+
+            files = []
+            embeds = []
+
+            for asset in selected_assets:
                 try:
                     image_bytes, img_error = await get_asset_thumbnail(self, asset.id)
 
                     if img_error:
-                        await interaction.followup.send(f"Could not load image for {asset.original_file_name}: {img_error}")
+                        print(f"Could not load image for {asset.original_file_name}: {img_error}")
                         continue
 
                     file = discord.File(io.BytesIO(image_bytes), filename=asset.original_file_name)
 
                     embed = discord.Embed(
                         title=f"Memory: {asset.original_file_name}",
-                        description=f"Created: {asset.file_created_at.strftime('%Y-%m-%d %H:%M:%S')}",
+                        description=(
+                            f"**Date:** {asset.file_created_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                            f"**Location:** {asset.location}"
+                        ),
                         color=discord.Color.blue()
                     )
                     embed.set_image(url=f"attachment://{asset.original_file_name}")
 
-                    await interaction.followup.send(embed=embed, file=file)
-                    count += 1
+                    files.append(file)
+                    embeds.append(embed)
+
                 except Exception as loop_error:
                     print(f"Error processing asset {asset.id}: {loop_error}")
                     continue
             
-            if count == 0:
+            if files:
+                await interaction.followup.send(files=files, embeds=embeds)
+            else:
                 await interaction.followup.send("Found assets, but failed to download any images.")
 
         except Exception as e:
