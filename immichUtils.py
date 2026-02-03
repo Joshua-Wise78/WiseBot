@@ -69,6 +69,9 @@ class SimpleAsset:
             elif lat is not None and long_ is not None:
                 self.location = f"{lat:.4f}, {long_:.4f}"
 
+async def random_image(self):
+    return "Not implemented"
+
 async def get_asset_thumbnail(self, asset_id):
     if self.client is None:
         return None, "Client not connected"

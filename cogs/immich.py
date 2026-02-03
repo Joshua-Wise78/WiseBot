@@ -17,7 +17,7 @@ from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
 from immichUtils import ( check_immich_connection,
-     convert_search_response_dto,
+     convert_search_response_dto, random_image,
      upload_image,
      list_memories,
      get_asset_thumbnail
@@ -27,7 +27,6 @@ from immichUtils import ( check_immich_connection,
  TODO:
      1. Refactor code move server connection into its own cog and connection points.
      2. Add a random photo grabber function.
-     3. Refactor output for getMemories function to not spam the server.
      4. Add support for videos.
      5. Add function to favorite images and filter them?
      6. Album smart sort? (This one will suck)
@@ -59,6 +58,8 @@ class Immich(commands.Cog):
         local_url = f"http://{LOCAL_IP}:2283"
         local_attempt = await self.check_connection(local_url)
 
+        print(local_url)
+
         if local_attempt:
             self.client = AuthenticatedClient(base_url=local_url + "/api",
                                              token=IMMICH_KEY)
@@ -75,6 +76,8 @@ class Immich(commands.Cog):
                                                    auth_header_name="x-api-key",
                                                    prefix="")
                 print("Connected through Tailscale.")
+            else:
+                print("Did not connect to immich.")
 
     async def check_connection(self, url):
         """
@@ -113,9 +116,16 @@ class Immich(commands.Cog):
         except Exception as e:
              await interaction.followup.send(f"Error uploading file: {str(e)}")
 
-    # Search for an image using smart_search feature from Immich
-    @app_commands.command(name="search-photo", description="Smart search image with query.")
-    async def searchImg(self, interaction: discord.Interaction):
+    @app_commands.command(name="random-photo", description="Get Random Photo.")
+    async def randomPhoto(self, interaction: discord.Interaction):
+        await interaction.response.defer(thinking=True)
+
+        try:
+            response = await random_image(self)
+
+        except Exception as e:
+            await interaction.followup.send(f"Error getting photo: {str(e)}")
+        
         await interaction.response.send_message("Not implemented currently.")
 
     @app_commands.command(name="memories", description="List 5 random memories from date {XXXX-XX-XX}")
