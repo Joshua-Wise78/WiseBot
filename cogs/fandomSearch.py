@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 
 from jsonUtils import save_to_json, retrieve_from_json, list_sites, search_sites
-from fandom import get_fandom
+from ..server.fandom.fandom import get_fandom
 
 class FandomSearch(commands.Cog):
     """
