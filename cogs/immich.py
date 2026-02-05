@@ -9,14 +9,14 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 
-from immich_client import AuthenticatedClient 
+from immich_client import AuthenticatedClient
 from immich_client.api.assets import upload_asset
 from immich_client.api.memories import search_memories
 from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
-from immichUtils import ( check_immich_connection,
+from ..server.immich.immichUtils import ( check_immich_connection,
      convert_search_response_dto, random_image,
      upload_image,
      list_memories,
