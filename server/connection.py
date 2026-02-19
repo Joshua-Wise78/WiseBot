@@ -1,0 +1,61 @@
+import os
+import httpx
+from dotenv import laod_dotenv
+from immich_client import AuthenticatedClient
+
+load_dotenv()
+
+class ConnectionManager:
+    def __init__(self):
+        self.immich_client = None
+        # jellyfin
+        # paperless
+
+        self.local_ip = os.getenv("LOCAL_IP")
+        self.tailscale_ip = os.getenv("TAILSCALE_IP")
+        self.immich_client = os.getenv("IMMICH_KEY")
+
+        async def connect_all(self):
+            print("- - - Server Conection Start - - -")
+            await self.connect_immich()
+            # jellyfin
+            # paperless
+            print("- - - Connection Setup Complete - - -")
+
+        async def check_connection(self, url):
+            try:
+                async with httpx.AsyncClient() as client:
+
+                    response = await client.get(url, timeout=2.0)
+                    if response.status_code == 200:
+                        return True
+            except Exception:
+                return False
+
+            return False
+
+        async def connect_immich(self):
+            pass
+
+        async def connect_jellyfin(self):
+            pass
+
+        async def connect_paperless(self):
+            pass
+
+        def get_all_status(self):
+            return {
+                "Immich": self._get_client_url(self.immich_client),
+                "Jellyfin": "Not implemented",
+                "Paperless": "Not implemented"
+            }
+
+        def _get_client_url(self, client):
+
+            if not client:
+                return "Disconnected"
+
+            url = getattr(client, 'base_url', getattr(client, '_base_url', 'Unknown'))
+            if "Unknown" in url:
+                return "Connected (Unknown URL)"
+            return f"Connected ({url})""

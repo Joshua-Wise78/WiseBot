@@ -48,7 +48,6 @@ class SimpleAsset:
         self.location = "Unknown Location"
         
         if exif:
-            # Debug: Print this to your console to see what Immich is actually returning
             print(f"DEBUG EXIF for {self.id}: {exif}")
 
             def get_val(obj, attr):
