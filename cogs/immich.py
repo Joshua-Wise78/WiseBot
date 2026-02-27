@@ -25,12 +25,10 @@ from ..server.immich.immichUtils import ( check_immich_connection,
 
 """
  TODO:
-     1. Refactor code move server connection into its own cog and connection points.
      2. Add a random photo grabber function.
      4. Add support for videos.
      5. Add function to favorite images and filter them?
      6. Album smart sort? (This one will suck)
-     
  """
 
 load_dotenv()
