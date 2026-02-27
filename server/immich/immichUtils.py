@@ -180,11 +180,3 @@ async def upload_image(self, photo: discord.Attachment):
 
     except Exception as e:
         return f"Upload Error: {e}"
-
-def check_immich_connection(self):
-    if not self.client:
-        return "Error: Not connected to Immich."
-    else:
-        # Safe URL check
-        url = getattr(self.client, 'base_url', getattr(self.client, '_base_url', 'Unknown URL'))
-        return f"Connected to {url}"

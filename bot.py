@@ -6,12 +6,14 @@ import traceback
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from server.connection import ConnectionManager
+
 load_dotenv()
 try:
     TOKEN = os.environ["DISCORD_TOKEN"]
     ID = int(os.environ["GUILD_ID"])
 except KeyError as e:
-    print(f"Missing enviorment variable {e}")
+    print(f"Missing environment variable {e}")
     sys.exit(1)
 except ValueError:
     print(f"Error: GUILD_ID is not a valid number")
@@ -26,8 +28,14 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-initial_extensions = ["cogs.fandomSearch", "cogs.immich"]
+async def setup_hook():
+    print("Initializing server connections...")
+    bot.connections = ConnectionManager()
+    await bot.connections.connect_all()
 
+bot.setup_hook = setup_hook
+
+initial_extensions = ["cogs.fandomSearch", "cogs.immich", "server.status"]
 
 @bot.event
 async def on_ready():
@@ -50,4 +58,4 @@ async def on_ready():
 
 
 if __name__ == "__main__":
-    bot.run(TOKEN)
+    bot.run(TOKEN, log_handler=handler)
