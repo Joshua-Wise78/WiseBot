@@ -6,22 +6,23 @@ class Status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        @app_commands.command(name="status", description="Check connection status of server.")
-        async def status(self, interaction: discord.Interaction):
-            await interaction.response.defer()
+    @app_commands.command(name="status", description="Check connection status of server.")
+    async def status(self, interaction: discord.Interaction):
+        await interaction.response.defer()
 
-            statuses = self.bot.connections.get_all_statuses()
+        # This correctly calls the manager we attached to your WiseBot subclass
+        statuses = self.bot.connections.get_all_statuses()
 
-            embed = discord.Embed(
-                title="System Status",
-                description="Current connection status for external services.",
-                color=discord.Color.blue()
-            )
+        embed = discord.Embed(
+            title="System Status",
+            description="Current connection status for external services.",
+            color=discord.Color.blue()
+        )
 
-            for service, status in statuses.items():
-                embed.add_field(name=service, value=status, inline=False)
+        for service, status in statuses.items():
+            embed.add_field(name=service, value=status, inline=False)
 
-            await interaction.followup.send(embed=embed)
+        await interaction.followup.send(embed=embed)
 
-        async def setup(bot):
-            await bot.add_cog(Status(bot))
+async def setup(bot):
+    await bot.add_cog(Status(bot))
