@@ -26,36 +26,36 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix="!", intents=intents)
-
-async def setup_hook():
-    print("Initializing server connections...")
-    bot.connections = ConnectionManager()
-    await bot.connections.connect_all()
-
-bot.setup_hook = setup_hook
-
 initial_extensions = ["cogs.fandomSearch", "cogs.immich", "server.status"]
 
-@bot.event
-async def on_ready():
-    print(f"{bot.user} connected to Discord")
+class WiseBot(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix="!", intents=intents)
+        self.connections: ConnectionManager | None = None
 
-    for extension in initial_extensions:
+    async def setup_hook(self):
+        print("Initializing server connections...")
+        self.connections = ConnectionManager()
+        await self.connections.connect_all()
+
+        for extension in initial_extensions:
+            try:
+                await self.load_extension(extension)
+                print(f"Extension loaded: {extension}")
+            except Exception as e:
+                print(f"Failed to load extension: {extension}. Reason: {e}")
+                traceback.print_exc()
+
+    async def on_ready(self):
+        print(f"{self.user} connected to Discord")
         try:
-            await bot.load_extension(extension)
-            print(f"Extension loaded: {extension}")
+            self.tree.copy_global_to(guild=GUILD_ID)
+            await self.tree.sync(guild=GUILD_ID)
+            print("Synced command(s) to server")
         except Exception as e:
-            print(f"Failed to load extension: {extension}. Reason: {e}")
-            traceback.print_exc()
+            print(e)
 
-    try:
-        bot.tree.copy_global_to(guild=GUILD_ID)
-        await bot.tree.sync(guild=GUILD_ID)
-        print("Synced command(s) to server")
-    except Exception as e:
-        print(e)
-
+bot = WiseBot()
 
 if __name__ == "__main__":
     bot.run(TOKEN, log_handler=handler)

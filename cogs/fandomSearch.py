@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 
 from jsonUtils import save_to_json, retrieve_from_json, list_sites, search_sites
-from ..server.fandom.fandom import get_fandom
+from server.fandom.fandom import get_fandom, retrieve_from_json
 
 class FandomSearch(commands.Cog):
     """
@@ -11,25 +11,7 @@ class FandomSearch(commands.Cog):
         1. Robust Error handling needs to be put in place to return logs & codes
             to the user for errors.
         2. Add capabilities for multiple directory or files within one function
-            call for ease of use.
-            
-    Greetings
-        Testing method used to test the bot, simply greets user.
-
-    Store_Site
-        Store a site to json file for usage later.
-        Args:
-            site (str): The URL of the site.
-            key (str): Name of the site for easy retrievability.
-
-    Retrieve_Site
-        Retrieve a site from json to display to the user.
-        Args:
-            key (str): Key of the site to be retrieved.
-
-    List_Site(s)
-        List site(s) for the user to select from.
-        Eventually will need a param for filename
+            call for ease of use.            
     """
 
     def __init__(self, bot):
