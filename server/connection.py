@@ -2,14 +2,15 @@ import os
 import httpx
 from dotenv import load_dotenv
 from immich_client import AuthenticatedClient
+from paperless_client import AuthenticatedClient
 
 load_dotenv()
 
 class ConnectionManager:
     def __init__(self):
         self.immich_client = None
+        self.paperless_client = None
         # jellyfin
-        # paperless
 
         self.local_ip = os.getenv("LOCAL_IP", "")
         self.tailscale_ip = os.getenv("TAILSCALE_IP", "")
