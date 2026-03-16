@@ -26,7 +26,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-initial_extensions = ["cogs.fandomSearch", "cogs.immich", "server.status"]
+initial_extensions = ["cogs.fandomSearch", "cogs.immich", "server.status", "cogs.paperless"]
 
 class WiseBot(commands.Bot):
     def __init__(self):

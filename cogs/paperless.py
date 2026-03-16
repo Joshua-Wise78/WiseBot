@@ -20,6 +20,19 @@ class Paperless(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.client = None
+
+    async def cog_load(self):
+        """
+          Initalizes the Paperless client by connecting to the Local_IP first then
+          falling back on Tailscale as a secondary connection.  
+        """
+        self.client = self.bot.connections.paperless_client
+
+        if self.client:
+            print("Paperless cog successfully loaded.")
+        else:
+            print("Paperless cog loaded, but Paperless client is currently not connected")
+
     
     @app_commands.command(name="upload-document", description="Upload photo to paperless-ngx")
     async def upload_document(self, interaction: discord.Interaction, document: discord.Attachment):
@@ -28,3 +41,6 @@ class Paperless(commands.Cog):
     @app_commands.command(name="retrieve-document", description="Retrieve document from paperless-ngx")
     async def retrieve_document(self, interaction: discord.Interaction):
         pass
+
+async def setup(bot):
+    await bot.add_cog(Paperless(bot))

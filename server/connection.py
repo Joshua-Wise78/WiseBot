@@ -1,8 +1,9 @@
 import os
 import httpx
 from dotenv import load_dotenv
-from immich_client import AuthenticatedClient
-from paperless_client import AuthenticatedClient
+from immich_client import AuthenticatedClient as ImmichClient
+from paperless_client import AuthenticatedClient as PaperlessClient
+from paperless_client.api.status import status_retrieve
 
 load_dotenv()
 
@@ -23,10 +24,10 @@ class ConnectionManager:
         await self.connect_paperless()
         print("- - - Connection Setup Complete - - -")
 
-    async def check_connection(self, url):
+    async def check_connection(self, url, headers=None):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(url, timeout=2.0)
+                response = await client.get(url, headers=headers, timeout=2.0)
                 if response.status_code == 200:
                     return True
         except Exception:
@@ -41,7 +42,7 @@ class ConnectionManager:
         local_attempt = await self.check_connection(f"{local_url}/server-info/ping")
 
         if local_attempt:
-            self.immich_client = AuthenticatedClient(
+            self.immich_client = ImmichClient(
                 base_url=local_url + "/api",
                 token=self.immich_key
             )
@@ -53,7 +54,7 @@ class ConnectionManager:
         vpn_attempt = await self.check_connection(f"{tailscale_url}/server-info/ping")
 
         if vpn_attempt:
-            self.immich_client = AuthenticatedClient(
+            self.immich_client = ImmichClient(
                 base_url=tailscale_url + "/api",
                 token=self.immich_key,
                 auth_header_name="x-api-key",
@@ -70,33 +71,34 @@ class ConnectionManager:
     async def connect_paperless(self):
         local_url = f"http://{self.local_ip}:8000"
         print(f"Attempting local connection: {local_url}")
-
-        local_attempt = await self.check_connection(f"{local_url}/server-info")
+        
+        local_attempt = await self.check_connection(f"{local_url}/server-info/ping")
 
         if local_attempt:
-            self.paperless_client = AuthenticatedClient(
+            self.immich_client = ImmichClient(
                 base_url=local_url + "/api",
-                token=self.paperless_key
+                token=self.immich_key
             )
-            print("Connected to Paperless through Local Address.")
+            print("Connected to Immich through Local Address.")
             return
 
-        print("Local Address did not find Paperless. Trying Tailscale...")
-        tailscale_url = f"http://{self.tailscale_ip}:8000"
-        vpn_attempt = await self.check_connection(f"{tailscale_url}/server-into/ping")
+        print("Local Address did not find Immich. Trying Tailscale...")
+        tailscale_url = f"http://{self.tailscale_ip}:2283"
+        vpn_attempt = await self.check_connection(f"{tailscale_url}/server-info/ping")
 
         if vpn_attempt:
-            self.paperless_client = AuthenticatedClient(
+            self.immich_client = ImmichClient(
                 base_url=tailscale_url + "/api",
-                token=self.paperless_key,
+                token=self.immich_key,
                 auth_header_name="x-api-key",
                 prefix=""
             )
+            print("Connected to Immich through Tailscale.")
         else:
-            print("Did not connect to Paperless.")
-            self.paperless_client = None
+            print("Did not connect to Immich.")
+            self.immich_client = None
 
-    def get_all_statuses(self):
+    def get_all_status(self):
         return {
             "Immich": self._get_client_url(self.immich_client),
             "Jellyfin": "Not implemented",
