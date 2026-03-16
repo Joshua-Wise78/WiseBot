@@ -36,6 +36,14 @@ class Paperless(commands.Cog):
     
     @app_commands.command(name="upload-document", description="Upload photo to paperless-ngx")
     async def upload_document(self, interaction: discord.Interaction, document: discord.Attachment):
+        """
+          Paperless uses the pathway
+              /api/documents/post_document/
+
+          The API client generated used two files.
+          1. documents_post_document_create.py - This is the API call that we will use to build a file
+          2. post_document_request.py - This is the model of the file to be uploaded aka the body
+        """
         pass
 
     @app_commands.command(name="retrieve-document", description="Retrieve document from paperless-ngx")

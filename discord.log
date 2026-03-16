@@ -1,2 +1,255 @@
 [2026-03-16 08:16:11] [INFO    ] discord.client: logging in using static token
 [2026-03-16 08:16:22] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 4443c451e1ddca427591131d6a7e88b1).
+[2026-03-16 08:51:37] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 4443c451e1ddca427591131d6a7e88b1.
+[2026-03-16 09:41:47] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 09:48:42] [ERROR   ] discord.client: Attempting a reconnect in 0.03s
+Traceback (most recent call last):
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1562, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1178, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1209, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/resolver.py", line 40, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 936, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        None, getaddr_func, host, port, family, type, proto, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/client.py", line 724, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/gateway.py", line 383, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/http.py", line 566, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 1076, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        req, traces=traces, timeout=real_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1239, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1568, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+[2026-03-16 10:31:33] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 10:31:39] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: eda464bbd45563ccc54bfd5720988b39).
+[2026-03-16 10:34:00] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 10:34:05] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 910402c4c14e8df158d8370669215bf8).
+[2026-03-16 10:34:50] [WARNING ] discord.gateway: Can't keep up, shard ID None websocket is 21.9s behind.
+[2026-03-16 10:48:55] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 10:49:01] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 00beba8cda044125f5b57ccecc913f5a).
+[2026-03-16 10:58:57] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 11:04:14] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 11:05:48] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 11:05:54] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 84d4a453727e92ed90d5e6ce75ed38c2).
+[2026-03-16 11:22:38] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 11:41:10] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 12:12:25] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 12:12:31] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: e8c8b12d3d26b58a0eedf96c8e33de40).
+[2026-03-16 12:24:30] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 12:26:30] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 12:29:51] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 12:29:57] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: cd120926b9ee0edeafc273dcee636fce).
+[2026-03-16 12:46:42] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 12:48:16] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 13:02:40] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 13:02:46] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: e4560b8506cb2a89d88d3b9c32fedc5a).
+[2026-03-16 13:31:05] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 13:31:10] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 0e87d1c1a542fae7e0aca028a2787b86).
+[2026-03-16 14:25:04] [ERROR   ] discord.client: Attempting a reconnect in 2.54s
+Traceback (most recent call last):
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1298, in _wrap_create_connection
+    sock = await aiohappyeyeballs.start_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohappyeyeballs/impl.py", line 122, in start_connection
+    raise first_exception
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohappyeyeballs/impl.py", line 73, in start_connection
+    sock = await _connect_sock(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohappyeyeballs/impl.py", line 208, in _connect_sock
+    await loop.sock_connect(sock, address)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/selector_events.py", line 645, in sock_connect
+    return await fut
+           ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/selector_events.py", line 653, in _sock_connect
+    sock.connect(address)
+    ~~~~~~~~~~~~^^^^^^^^^
+OSError: [Errno 51] Network is unreachable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/client.py", line 724, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/gateway.py", line 383, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/http.py", line 566, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 1076, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        req, traces=traces, timeout=real_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1239, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1611, in _create_direct_connection
+    raise last_exc
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1580, in _create_direct_connection
+    transp, proto = await self._wrap_create_connection(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1321, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [Network is unreachable]
+[2026-03-16 14:25:10] [ERROR   ] discord.client: Attempting a reconnect in 4.47s
+Traceback (most recent call last):
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1562, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1178, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1209, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/resolver.py", line 40, in resolve
+    infos = await self._loop.getaddrinfo(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 936, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        None, getaddr_func, host, port, family, type, proto, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/client.py", line 724, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/gateway.py", line 383, in from_client
+    socket = await client.http.ws_connect(str(url))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/discord/http.py", line 566, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 1076, in _ws_connect
+    resp = await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        req, traces=traces, timeout=real_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1239, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/joshua/repos/WiseBot/bot-env/lib/python3.14/site-packages/aiohttp/connector.py", line 1568, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host gateway-us-east1-b.discord.gg:443 ssl:default [nodename nor servname provided, or not known]
+[2026-03-16 14:41:00] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 14:43:48] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 14:43:54] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 4aefdff5f9bfb96227e35aa1dc8cdef7).
+[2026-03-16 15:44:47] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 15:44:53] [WARNING ] discord.state: Shard ID 0 timed out waiting for chunks for guild_id 1278530103097425942.
+[2026-03-16 15:44:53] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: f8741500a8075c7649381af47c113db5).
+[2026-03-16 18:13:17] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 18:13:23] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 8877c315142d8b30d2453de27f2bd57c).
+[2026-03-16 19:17:18] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+[2026-03-16 19:17:23] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 10d33e4df33cde69973e26163e2ea406).
