@@ -10,8 +10,7 @@ class Status(commands.Cog):
     async def status(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
-        # This correctly calls the manager we attached to your WiseBot subclass
-        statuses = self.bot.connections.get_all_statuses()
+        statuses = self.bot.connections.get_all_status()
 
         embed = discord.Embed(
             title="System Status",
