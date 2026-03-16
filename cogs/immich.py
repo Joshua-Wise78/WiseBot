@@ -16,21 +16,20 @@ from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
-from ..server.immich.immichUtils import ( check_immich_connection,
-     convert_search_response_dto, random_image,
-     upload_image,
-     list_memories,
-     get_asset_thumbnail
+from server.immich.immichUtils import (
+    convert_search_response_dto,
+    random_image,
+    upload_image,
+    list_memories,
+    get_asset_thumbnail
  )
 
 """
  TODO:
-     1. Refactor code move server connection into its own cog and connection points.
      2. Add a random photo grabber function.
      4. Add support for videos.
      5. Add function to favorite images and filter them?
      6. Album smart sort? (This one will suck)
-     
  """
 
 load_dotenv()
@@ -55,29 +54,12 @@ class Immich(commands.Cog):
           Initalizes the Immich client by connecting to the Local_IP first then
           falling back on Tailscale as a secondary connection.  
         """
-        local_url = f"http://{LOCAL_IP}:2283"
-        local_attempt = await self.check_connection(local_url)
+        self.client = self.bot.connections.immich_client
 
-        print(local_url)
-
-        if local_attempt:
-            self.client = AuthenticatedClient(base_url=local_url + "/api",
-                                             token=IMMICH_KEY)
-            print("Connected through Local Address.")
-
-        if not local_attempt:
-            print("Local Address did not find Immich.")
-            tailscale_url = f"http://{TAILSCALE_IP}:2283"
-            vpn_attempt = await self.check_connection(tailscale_url)
-
-            if vpn_attempt:
-                self.client = AuthenticatedClient(base_url=tailscale_url + "/api",
-                                                   token=IMMICH_KEY,
-                                                   auth_header_name="x-api-key",
-                                                   prefix="")
-                print("Connected through Tailscale.")
-            else:
-                print("Did not connect to immich.")
+        if self.client:
+            print("Immich cog successfully loaded.")
+        else:
+            print("Immich cog loaded, but Immich client is currently not connected")
 
     async def check_connection(self, url):
         """
@@ -92,16 +74,6 @@ class Immich(commands.Cog):
         except Exception:
             return None
         return None
-
-    @app_commands.command(name="check-immich-connection",
-                           description="Check Immich status.")
-    async def status(self, interaction: discord.Interaction):
-        """
-            Slash command used to call check_immich_connection to see if the
-            client is connected to Immich's api or not.  
-        """
-        response  = check_immich_connection(self)            
-        await interaction.response.send_message(response)
 
     @app_commands.command(name="send-photo", description="Send a photo to Immich instance.")
     async def sendImg(self, interaction: discord.Interaction, photo: discord.Attachment):
