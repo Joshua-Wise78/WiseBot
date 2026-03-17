@@ -75,7 +75,7 @@ class Immich(commands.Cog):
             return None
         return None
 
-    @app_commands.command(name="send-photo", description="Send a photo to Immich instance.")
+    @app_commands.command(name="immich-upload-photo", description="Send a photo to Immich instance.")
     async def sendImg(self, interaction: discord.Interaction, photo: discord.Attachment):
         """
           Slash command that sends a photo to immich calling upload_image from
@@ -88,7 +88,7 @@ class Immich(commands.Cog):
         except Exception as e:
              await interaction.followup.send(f"Error uploading file: {str(e)}")
 
-    @app_commands.command(name="random-photo", description="Get Random Photo.")
+    @app_commands.command(name="immich-random-photo", description="Get Random Photo.")
     async def randomPhoto(self, interaction: discord.Interaction):
         await interaction.response.defer(thinking=True)
 
@@ -100,7 +100,7 @@ class Immich(commands.Cog):
         
         await interaction.response.send_message("Not implemented currently.")
 
-    @app_commands.command(name="memories", description="List 5 random memories from date {XXXX-XX-XX}")
+    @app_commands.command(name="immich-memories", description="List 5 random memories from date {XXXX-XX-XX}")
     async def getMempory(self, interaction: discord.Interaction, date: str):
         await interaction.response.defer(thinking=True)
 

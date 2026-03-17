@@ -38,7 +38,7 @@ class Paperless(commands.Cog):
             print("Paperless cog loaded, but Paperless client is currently not connected")
 
     
-    @app_commands.command(name="upload-document", description="Upload photo to paperless-ngx")
+    @app_commands.command(name="paperless-upload-document", description="Upload photo to paperless-ngx")
     async def upload_document(self, interaction: discord.Interaction, document: discord.Attachment):
         """
           Paperless uses the pathway

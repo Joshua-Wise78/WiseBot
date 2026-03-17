@@ -17,18 +17,12 @@ class FandomSearch(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="greetings", description="Greet the user")
-    async def greet(
-        self, interaction: discord.Interaction, user: discord.Member, message: str
-    ):
-        await interaction.response.send_message(f"Hey {user.mention}! {message}")
-
-    @app_commands.command(name="store-site", description="Store a site")
+    @app_commands.command(name="fandom-store-site", description="Store a site")
     async def storeSite(self, interaction: discord.Interaction, key: str, site: str):
         save_to_json(key, site)
         await interaction.response.send_message(f"Saved {site} to {key}")
 
-    @app_commands.command(name="retrieve-site", description="Retrieve Site")
+    @app_commands.command(name="fandom-retrieve-site", description="Retrieve Site")
     async def retrieveSite(self, interaction: discord.Interaction, key: str):
         success, retrieved = retrieve_from_json(key)
         if success:
@@ -38,7 +32,7 @@ class FandomSearch(commands.Cog):
             error_message = retrieved
             await interaction.response.send_message(f"Error: {error_message}")
 
-    @app_commands.command(name="list-sites", description="List sites from storage")
+    @app_commands.command(name="fandom-list-sites", description="List sites from storage")
     async def listSites(self, interaction: discord.Interaction):
         success, result = list_sites()
 
@@ -48,7 +42,7 @@ class FandomSearch(commands.Cog):
         else:
             await interaction.response.send_message(f"Error: {result}")
 
-    @app_commands.command(name="search-sites", description="Search for a stored site.")
+    @app_commands.command(name="fandom-search-sites", description="Search for a stored site.")
     async def searchSites(self, interaction: discord.Interaction, query: str):
         success, result = search_sites(query)
 
@@ -59,7 +53,7 @@ class FandomSearch(commands.Cog):
             await interaction.response.send_message(f"Error: {result}")
 
     @app_commands.command(
-        name="search-fandom", description="Search Fandom for specifc items."
+        name="fandom-search", description="Search Fandom for specifc items."
     )
     async def searchWiki(self, interaction: discord.Interaction, key: str, query: str):
         success, result = await get_fandom(key, query)
