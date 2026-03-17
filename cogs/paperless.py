@@ -8,6 +8,10 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 
+from ..server.paperless.paperless_utils import (
+    upload_document
+)
+
 
 load_dotenv()
 try:
@@ -44,7 +48,12 @@ class Paperless(commands.Cog):
           1. documents_post_document_create.py - This is the API call that we will use to build a file
           2. post_document_request.py - This is the model of the file to be uploaded aka the body
         """
-        pass
+        await interaction.response.defer(thinking=True)
+        try:
+            response = await upload_document(self, document)
+            await interaction.followup.send(f"{response}")
+        except Exception as e:
+            await interaction.followup.send(f"Error uploaded document: {str(e)}")
 
     @app_commands.command(name="retrieve-document", description="Retrieve document from paperless-ngx")
     async def retrieve_document(self, interaction: discord.Interaction):
