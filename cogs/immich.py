@@ -16,7 +16,7 @@ from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
 from immich_client.api.server import get_server_version 
 
-from server.immich.immichUtils import (
+from server.immich.immich_utils import (
     convert_search_response_dto,
     random_image,
     upload_image,
@@ -79,7 +79,7 @@ class Immich(commands.Cog):
     async def sendImg(self, interaction: discord.Interaction, photo: discord.Attachment):
         """
           Slash command that sends a photo to immich calling upload_image from
-          immichUtils  
+          immich_utils
         """
         await interaction.response.defer(thinking=True)
         try:

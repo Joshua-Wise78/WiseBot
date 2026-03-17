@@ -8,7 +8,7 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 
-from ..server.paperless.paperless_utils import (
+from server.paperless.paperless_utils import (
     upload_document
 )
 
