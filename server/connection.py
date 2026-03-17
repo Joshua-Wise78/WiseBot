@@ -80,7 +80,7 @@ class ConnectionManager:
 
         if local_attempt:
             self.paperless_client = PaperlessClient(
-                base_url=local_url + "/api",
+                base_url=local_url,
                 token=self.paperless_key,
                 auth_header_name="Authorization",
                 prefix="Token"
@@ -94,7 +94,7 @@ class ConnectionManager:
 
         if vpn_attempt:
             self.paperless_client = PaperlessClient(
-                base_url=tailscale_url + "/api",
+                base_url=tailscale_url,
                 token=self.paperless_key,
                 auth_header_name="Authorization",
                 prefix="Token"
