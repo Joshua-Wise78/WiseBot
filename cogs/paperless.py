@@ -20,6 +20,7 @@ try:
 except KeyError as e:
     print(f"Missing enviornment variable {e}")
 
+
 class Paperless(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -37,7 +38,6 @@ class Paperless(commands.Cog):
         else:
             print("Paperless cog loaded, but Paperless client is currently not connected")
 
-    
     @app_commands.command(name="paperless-upload-document", description="Upload photo to paperless-ngx")
     async def upload_document(self, interaction: discord.Interaction, document: discord.Attachment):
         """
@@ -58,6 +58,7 @@ class Paperless(commands.Cog):
     @app_commands.command(name="retrieve-document", description="Retrieve document from paperless-ngx")
     async def retrieve_document(self, interaction: discord.Interaction):
         pass
+
 
 async def setup(bot):
     await bot.add_cog(Paperless(bot))

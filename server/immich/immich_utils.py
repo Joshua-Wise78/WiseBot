@@ -16,6 +16,7 @@ from immich_client.api.assets import view_asset
 load_dotenv()
 IMMICH_KEY = os.getenv("IMMICH_KEY")
 
+
 class SimpleAsset:
     def __init__(self, data):
         if hasattr(data, "id"):
@@ -23,7 +24,7 @@ class SimpleAsset:
             self.original_file_name = getattr(data, "original_file_name", None)
             created_at = getattr(data, "file_created_at", None)
             exif = getattr(data, "exif_info", None)
-            
+
         else:
             self.id = data.get('id')
             self.original_file_name = data.get('originalFileName')
@@ -39,19 +40,20 @@ class SimpleAsset:
             self.file_created_at = created_at
         elif isinstance(created_at, str):
             try:
-                self.file_created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                self.file_created_at = datetime.fromisoformat(
+                    created_at.replace('Z', '+00:00'))
             except ValueError:
                 self.file_created_at = datetime.now()
         else:
             self.file_created_at = datetime.now()
 
         self.location = "Unknown Location"
-        
+
         if exif:
             print(f"DEBUG EXIF for {self.id}: {exif}")
 
             def get_val(obj, attr):
-                if isinstance(obj, dict): 
+                if isinstance(obj, dict):
                     return obj.get(attr)
                 return getattr(obj, attr, None)
 
@@ -62,14 +64,16 @@ class SimpleAsset:
             long_ = get_val(exif, 'longitude')
 
             loc_parts = [p for p in [city, state, country] if p]
-            
+
             if loc_parts:
                 self.location = ", ".join(loc_parts)
             elif lat is not None and long_ is not None:
                 self.location = f"{lat:.4f}, {long_:.4f}"
 
+
 async def random_image(self):
     return "Not implemented"
+
 
 async def get_asset_thumbnail(self, asset_id):
     if self.client is None:
@@ -92,7 +96,7 @@ async def get_asset_thumbnail(self, asset_id):
 
     except Exception as e:
         return None, f"Error downloading thumbnail: {e}"
-            
+
 
 async def convert_search_response_dto(search_result):
     if not search_result:
@@ -101,10 +105,10 @@ async def convert_search_response_dto(search_result):
     try:
         # The API returns a SearchResponseDto -> assets -> items
         assets_wrapper = getattr(search_result, 'assets', None)
-        
+
         if assets_wrapper and hasattr(assets_wrapper, "items"):
             return [SimpleAsset(item) for item in assets_wrapper.items], None
-            
+
         return None, "Could not locate asset list in response structure."
 
     except Exception as e:
@@ -123,8 +127,10 @@ async def list_memories(self, date):
             return None,  "Not connected to the client."
 
         local_tz = datetime.now().astimezone().tzinfo
-        start_local = date_obj.replace(hour=0, minute=0, second=0, tzinfo=local_tz)
-        end_local = date_obj.replace(hour=23, minute=59, second=59, tzinfo=local_tz)
+        start_local = date_obj.replace(
+            hour=0, minute=0, second=0, tzinfo=local_tz)
+        end_local = date_obj.replace(
+            hour=23, minute=59, second=59, tzinfo=local_tz)
 
         body = MetadataSearchDto(
             taken_after=start_local,
@@ -132,10 +138,10 @@ async def list_memories(self, date):
         )
 
         response = await search_assets.asyncio(
-            client=self.client, 
+            client=self.client,
             body=body
         )
-        
+
         return response, None
 
     except TypeError as e:
@@ -143,7 +149,7 @@ async def list_memories(self, date):
     except Exception as e:
         return None, f"Error searching memories: {e}"
 
-    
+
 async def upload_image(self, photo: discord.Attachment):
     try:
         if self.client is None:
@@ -157,7 +163,7 @@ async def upload_image(self, photo: discord.Attachment):
         immich_file = File(
             payload=file_stream,
             file_name=photo.filename,
-            mime_type=photo.content_type or "image/jpeg"        
+            mime_type=photo.content_type or "image/jpeg"
         )
 
         body = AssetMediaCreateDto(

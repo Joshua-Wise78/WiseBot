@@ -14,7 +14,7 @@ from immich_client.api.assets import upload_asset
 from immich_client.api.memories import search_memories
 from immich_client.models import AssetMediaCreateDto
 from immich_client.types import File
-from immich_client.api.server import get_server_version 
+from immich_client.api.server import get_server_version
 
 from server.immich.immich_utils import (
     convert_search_response_dto,
@@ -22,7 +22,7 @@ from server.immich.immich_utils import (
     upload_image,
     list_memories,
     get_asset_thumbnail
- )
+)
 
 """
  TODO:
@@ -40,11 +40,13 @@ try:
 except KeyError as e:
     print(f"Missing enviornment variable {e}")
 
+
 class Immich(commands.Cog):
     """
         ADD:
             1. send-photo toggle for if the photo is favorite or not
     """
+
     def __init__(self, bot):
         self.bot = bot
         self.client = None
@@ -68,7 +70,7 @@ class Immich(commands.Cog):
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(f"{url}/server-info/ping",
-                                             timeout=2.0)
+                                            timeout=2.0)
                 if response.status_code == 200:
                     return url
         except Exception:
@@ -86,7 +88,7 @@ class Immich(commands.Cog):
             response = await upload_image(self, photo)
             await interaction.followup.send(f"{response}")
         except Exception as e:
-             await interaction.followup.send(f"Error uploading file: {str(e)}")
+            await interaction.followup.send(f"Error uploading file: {str(e)}")
 
     @app_commands.command(name="immich-random-photo", description="Get Random Photo.")
     async def randomPhoto(self, interaction: discord.Interaction):
@@ -97,7 +99,7 @@ class Immich(commands.Cog):
 
         except Exception as e:
             await interaction.followup.send(f"Error getting photo: {str(e)}")
-        
+
         await interaction.response.send_message("Not implemented currently.")
 
     @app_commands.command(name="immich-memories", description="List 5 random memories from date {XXXX-XX-XX}")
@@ -105,7 +107,7 @@ class Immich(commands.Cog):
         await interaction.response.defer(thinking=True)
 
         try:
-            search_res, error = await list_memories(self, date)                
+            search_res, error = await list_memories(self, date)
 
             if error:
                 await interaction.followup.send(error)
@@ -134,10 +136,12 @@ class Immich(commands.Cog):
                     image_bytes, img_error = await get_asset_thumbnail(self, asset.id)
 
                     if img_error:
-                        print(f"Could not load image for {asset.original_file_name}: {img_error}")
+                        print(
+                            f"Could not load image for {asset.original_file_name}: {img_error}")
                         continue
 
-                    file = discord.File(io.BytesIO(image_bytes), filename=asset.original_file_name)
+                    file = discord.File(io.BytesIO(
+                        image_bytes), filename=asset.original_file_name)
 
                     embed = discord.Embed(
                         title=f"Memory: {asset.original_file_name}",
@@ -147,7 +151,8 @@ class Immich(commands.Cog):
                         ),
                         color=discord.Color.blue()
                     )
-                    embed.set_image(url=f"attachment://{asset.original_file_name}")
+                    embed.set_image(
+                        url=f"attachment://{asset.original_file_name}")
 
                     files.append(file)
                     embeds.append(embed)
@@ -155,7 +160,7 @@ class Immich(commands.Cog):
                 except Exception as loop_error:
                     print(f"Error processing asset {asset.id}: {loop_error}")
                     continue
-            
+
             if files:
                 await interaction.followup.send(files=files, embeds=embeds)
             else:
@@ -163,6 +168,7 @@ class Immich(commands.Cog):
 
         except Exception as e:
             await interaction.followup.send(f"Error listing memories: {str(e)}")
+
 
 async def setup(bot):
     await bot.add_cog(Immich(bot))

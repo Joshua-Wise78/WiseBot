@@ -21,12 +21,15 @@ except ValueError:
 
 GUILD_ID = discord.Object(id=ID)
 
-handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
+handler = logging.FileHandler(
+    filename="discord.log", encoding="utf-8", mode="w")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-initial_extensions = ["cogs.fandomSearch", "cogs.immich", "server.status", "cogs.paperless"]
+initial_extensions = ["cogs.fandomSearch",
+                      "cogs.immich", "server.status", "cogs.paperless"]
+
 
 class WiseBot(commands.Bot):
     def __init__(self):
@@ -54,6 +57,7 @@ class WiseBot(commands.Bot):
             print("Synced command(s) to server")
         except Exception as e:
             print(e)
+
 
 bot = WiseBot()
 
