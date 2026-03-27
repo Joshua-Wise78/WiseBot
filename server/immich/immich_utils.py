@@ -26,10 +26,10 @@ class SimpleAsset:
             exif = getattr(data, "exif_info", None)
 
         else:
-            self.id = data.get('id')
-            self.original_file_name = data.get('originalFileName')
-            created_at = data.get('fileCreatedAt')
-            exif = data.get('exifInfo')
+            self.id = data.get("id")
+            self.original_file_name = data.get("originalFileName")
+            created_at = data.get("fileCreatedAt")
+            exif = data.get("exifInfo")
 
         # Name fallback
         if not self.original_file_name:
@@ -41,7 +41,8 @@ class SimpleAsset:
         elif isinstance(created_at, str):
             try:
                 self.file_created_at = datetime.fromisoformat(
-                    created_at.replace('Z', '+00:00'))
+                    created_at.replace("Z", "+00:00")
+                )
             except ValueError:
                 self.file_created_at = datetime.now()
         else:
@@ -57,11 +58,11 @@ class SimpleAsset:
                     return obj.get(attr)
                 return getattr(obj, attr, None)
 
-            city = get_val(exif, 'city')
-            state = get_val(exif, 'state')
-            country = get_val(exif, 'country')
-            lat = get_val(exif, 'latitude')
-            long_ = get_val(exif, 'longitude')
+            city = get_val(exif, "city")
+            state = get_val(exif, "state")
+            country = get_val(exif, "country")
+            lat = get_val(exif, "latitude")
+            long_ = get_val(exif, "longitude")
 
             loc_parts = [p for p in [city, state, country] if p]
 
@@ -85,8 +86,7 @@ async def get_asset_thumbnail(self, asset_id):
             real_uuid = uuid.UUID(asset_id)
 
         response_file = await view_asset.asyncio(
-            client=self.client,
-            id=real_uuid
+            client=self.client, id=real_uuid
         )
 
         if response_file and response_file.payload:
@@ -104,7 +104,7 @@ async def convert_search_response_dto(search_result):
 
     try:
         # The API returns a SearchResponseDto -> assets -> items
-        assets_wrapper = getattr(search_result, 'assets', None)
+        assets_wrapper = getattr(search_result, "assets", None)
 
         if assets_wrapper and hasattr(assets_wrapper, "items"):
             return [SimpleAsset(item) for item in assets_wrapper.items], None
@@ -124,23 +124,22 @@ async def list_memories(self, date):
 
     try:
         if self.client is None:
-            return None,  "Not connected to the client."
+            return None, "Not connected to the client."
 
         local_tz = datetime.now().astimezone().tzinfo
         start_local = date_obj.replace(
-            hour=0, minute=0, second=0, tzinfo=local_tz)
+            hour=0, minute=0, second=0, tzinfo=local_tz
+        )
         end_local = date_obj.replace(
-            hour=23, minute=59, second=59, tzinfo=local_tz)
+            hour=23, minute=59, second=59, tzinfo=local_tz
+        )
 
         body = MetadataSearchDto(
             taken_after=start_local,
             taken_before=end_local,
         )
 
-        response = await search_assets.asyncio(
-            client=self.client,
-            body=body
-        )
+        response = await search_assets.asyncio(client=self.client, body=body)
 
         return response, None
 
@@ -163,7 +162,7 @@ async def upload_image(self, photo: discord.Attachment):
         immich_file = File(
             payload=file_stream,
             file_name=photo.filename,
-            mime_type=photo.content_type or "image/jpeg"
+            mime_type=photo.content_type or "image/jpeg",
         )
 
         body = AssetMediaCreateDto(
@@ -171,13 +170,10 @@ async def upload_image(self, photo: discord.Attachment):
             device_asset_id=device_asset_id,
             device_id="discord-bot",
             file_created_at=datetime.now(),
-            file_modified_at=datetime.now()
+            file_modified_at=datetime.now(),
         )
 
-        response = await upload_asset.asyncio(
-            client=self.client,
-            body=body
-        )
+        response = await upload_asset.asyncio(client=self.client, body=body)
 
         if response:
             return f"Successfuly uploaded photo: {photo.filename} "

@@ -12,18 +12,22 @@ class FandomSearch(commands.Cog):
         1. Robust Error handling needs to be put in place to return logs & codes
             to the user for errors.
         2. Add capabilities for multiple directory or files within one function
-            call for ease of use.            
+            call for ease of use.
     """
 
     def __init__(self, bot):
         self.bot = bot
 
     @app_commands.command(name="fandom-store-site", description="Store a site")
-    async def storeSite(self, interaction: discord.Interaction, key: str, site: str):
+    async def storeSite(
+        self, interaction: discord.Interaction, key: str, site: str
+    ):
         save_to_json(key, site)
         await interaction.response.send_message(f"Saved {site} to {key}")
 
-    @app_commands.command(name="fandom-retrieve-site", description="Retrieve Site")
+    @app_commands.command(
+        name="fandom-retrieve-site", description="Retrieve Site"
+    )
     async def retrieveSite(self, interaction: discord.Interaction, key: str):
         success, retrieved = retrieve_from_json(key)
         if success:
@@ -33,30 +37,40 @@ class FandomSearch(commands.Cog):
             error_message = retrieved
             await interaction.response.send_message(f"Error: {error_message}")
 
-    @app_commands.command(name="fandom-list-sites", description="List sites from storage")
+    @app_commands.command(
+        name="fandom-list-sites", description="List sites from storage"
+    )
     async def listSites(self, interaction: discord.Interaction):
         success, result = list_sites()
 
         if success:
             response = "\n".join(result)
-            await interaction.response.send_message(f"Stored sites:\n{response}")
+            await interaction.response.send_message(
+                f"Stored sites:\n{response}"
+            )
         else:
             await interaction.response.send_message(f"Error: {result}")
 
-    @app_commands.command(name="fandom-search-sites", description="Search for a stored site.")
+    @app_commands.command(
+        name="fandom-search-sites", description="Search for a stored site."
+    )
     async def searchSites(self, interaction: discord.Interaction, query: str):
         success, result = search_sites(query)
 
         if success:
             response = "\n".join(result)
-            await interaction.response.send_message(f"Stored Sites:\n{response}")
+            await interaction.response.send_message(
+                f"Stored Sites:\n{response}"
+            )
         else:
             await interaction.response.send_message(f"Error: {result}")
 
     @app_commands.command(
         name="fandom-search", description="Search Fandom for specifc items."
     )
-    async def searchWiki(self, interaction: discord.Interaction, key: str, query: str):
+    async def searchWiki(
+        self, interaction: discord.Interaction, key: str, query: str
+    ):
         success, result = await get_fandom(key, query)
 
         if success:
