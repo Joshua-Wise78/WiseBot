@@ -81,6 +81,8 @@ class ConnectionManager:
         pass
 
     async def connect_paperless(self):
+        headers = {}
+
         if self.use_tailscale_only:
             local_url = f"http://{self.local_ip}:8000"
             print(f"Attempting local connection: {local_url}")
