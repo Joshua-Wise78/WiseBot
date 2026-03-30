@@ -24,14 +24,6 @@ from server.immich.immich_utils import (
     get_asset_thumbnail,
 )
 
-"""
- TODO:
-     2. Add a random photo grabber function.
-     4. Add support for videos.
-     5. Add function to favorite images and filter them?
-     6. Album smart sort? (This one will suck)
- """
-
 load_dotenv()
 try:
     IMMICH_KEY = os.environ["IMMICH_KEY"]
