@@ -63,7 +63,7 @@ class Paperless(commands.Cog):
             )
 
     @app_commands.command(
-        name="retrieve-document",
+        name="paperless-retrieve-document",
         description="Retrieve document from paperless-ngx",
     )
     async def retrieve_document(

@@ -34,11 +34,6 @@ except KeyError as e:
 
 
 class Immich(commands.Cog):
-    """
-    ADD:
-        1. send-photo toggle for if the photo is favorite or not
-    """
-
     def __init__(self, bot):
         self.bot = bot
         self.client = None
