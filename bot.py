@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import traceback
+import asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -22,7 +23,7 @@ except ValueError:
 GUILD_ID = discord.Object(id=ID)
 
 handler = logging.FileHandler(
-    filename="discord.log", encoding="utf-8", mode="w"
+    filename="discord.log", encoding="utf-8", mode="a"
 )
 intents = discord.Intents.default()
 intents.message_content = True
@@ -44,7 +45,16 @@ class WiseBot(commands.Bot):
     async def setup_hook(self):
         print("Initializing server connections...")
         self.connections = ConnectionManager()
-        await self.connections.connect_all()
+
+        try:
+            await asyncio.wait_for(self.connections.connect_all(), timeout=30.0)
+            print("Successfully connected to all services.")
+        except asyncio.TimeoutError:
+            print(
+                "Warning: Connection to services timed out. Bot will continue starting..."
+            )
+        except Exception as e:
+            print(f"Failed to connect to services: {e}")
 
         for extension in initial_extensions:
             try:
@@ -61,7 +71,7 @@ class WiseBot(commands.Bot):
             await self.tree.sync(guild=GUILD_ID)
             print("Synced command(s) to server")
         except Exception as e:
-            print(e)
+            print(f"Failed to sync commands: {e}")
 
 
 bot = WiseBot()

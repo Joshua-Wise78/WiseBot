@@ -3,7 +3,6 @@ import httpx
 from dotenv import load_dotenv
 from immich_client import AuthenticatedClient as ImmichClient
 from paperless_client import AuthenticatedClient as PaperlessClient
-from paperless_client.api.status import status_retrieve
 
 load_dotenv()
 
