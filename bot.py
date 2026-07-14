@@ -22,9 +22,7 @@ except ValueError:
 
 GUILD_ID = discord.Object(id=ID)
 
-handler = logging.FileHandler(
-    filename="discord.log", encoding="utf-8", mode="a"
-)
+handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="a")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True

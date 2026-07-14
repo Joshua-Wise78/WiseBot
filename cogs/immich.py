@@ -48,9 +48,7 @@ class Immich(commands.Cog):
         if self.client:
             print("Immich cog successfully loaded.")
         else:
-            print(
-                "Immich cog loaded, but Immich client is currently not connected"
-            )
+            print("Immich cog loaded, but Immich client is currently not connected")
 
     async def check_connection(self, url):
         """
@@ -58,9 +56,7 @@ class Immich(commands.Cog):
         """
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{url}/server-info/ping", timeout=2.0
-                )
+                response = await client.get(f"{url}/server-info/ping", timeout=2.0)
                 if response.status_code == 200:
                     return url
         except Exception:
@@ -85,9 +81,7 @@ class Immich(commands.Cog):
         except Exception as e:
             await interaction.followup.send(f"Error uploading file: {str(e)}")
 
-    @app_commands.command(
-        name="immich-random-photo", description="Get Random Photo."
-    )
+    @app_commands.command(name="immich-random-photo", description="Get Random Photo.")
     async def randomPhoto(self, interaction: discord.Interaction):
         await interaction.response.defer(thinking=True)
 
@@ -120,9 +114,7 @@ class Immich(commands.Cog):
                 return
 
             if not asset_list:
-                await interaction.followup.send(
-                    f"No memories found for {date}."
-                )
+                await interaction.followup.send(f"No memories found for {date}.")
                 return
 
             if len(asset_list) > 5:
@@ -135,9 +127,7 @@ class Immich(commands.Cog):
 
             for asset in selected_assets:
                 try:
-                    image_bytes, img_error = await get_asset_thumbnail(
-                        self, asset.id
-                    )
+                    image_bytes, img_error = await get_asset_thumbnail(self, asset.id)
 
                     if img_error:
                         print(
@@ -158,9 +148,7 @@ class Immich(commands.Cog):
                         ),
                         color=discord.Color.blue(),
                     )
-                    embed.set_image(
-                        url=f"attachment://{asset.original_file_name}"
-                    )
+                    embed.set_image(url=f"attachment://{asset.original_file_name}")
 
                     files.append(file)
                     embeds.append(embed)
